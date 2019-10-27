@@ -23,148 +23,6 @@ webpackEmptyAsyncContext.id = "./src/$$_lazy_route_resource lazy recursive";
 
 /***/ }),
 
-/***/ "./src/app/Assessment.ts":
-/*!*******************************!*\
-  !*** ./src/app/Assessment.ts ***!
-  \*******************************/
-/*! exports provided: Assessment */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Assessment", function() { return Assessment; });
-/* harmony import */ var _Choice__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Choice */ "./src/app/Choice.ts");
-
-/**
- * Used to store the mosaiq assessments that have been received from drupal
- * Assessments are defined by their id, type, description, and an array of choices
- * This format has been defined within Drupal, so that once Survey has been converted into a JSON string
- * It can match the data in Drupal
- */
-var Assessment = /** @class */ (function () {
-    /**
-     * Constructor for Assessment Class
-     * @param id
-     * The Assessment ID
-     * @param assessmentType
-     * The Assessment Type
-     * @param assessmentDesc
-     * The description of an Assessment
-     */
-    function Assessment(id, assessmentType, assessmentDesc) {
-        this.id = id;
-        this.asessmentType = assessmentType;
-        this.assessmentDesc = assessmentDesc;
-        this.choices = new Array(); // Create an instance of an array
-    }
-    /**
-     * Pushes a new choice to the end of the choice array
-     * @param choice
-     * The Choice of an assessment
-     */
-    Assessment.prototype.addChoice = function (choice) {
-        this.choices.push(new _Choice__WEBPACK_IMPORTED_MODULE_0__["Choice"](choice.id, choice.choiceDesc));
-    };
-    /**
-     * Sets the Assessment's description
-     * @param description
-     * Description of the assessment
-     */
-    Assessment.prototype.setAssessmentDescription = function (description) {
-        this.assessmentDesc = description;
-    };
-    return Assessment;
-}());
-
-
-
-/***/ }),
-
-/***/ "./src/app/Choice.ts":
-/*!***************************!*\
-  !*** ./src/app/Choice.ts ***!
-  \***************************/
-/*! exports provided: Choice */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Choice", function() { return Choice; });
-/**
- * This class store the choices that have been imported from Drupal
- * This format has been defined within Drupal, so that once Survey has been converted into a JSON string
- * It can match the data in Drupal
- */
-var Choice = /** @class */ (function () {
-    /**
-     * Constructor for Choice class
-     * @param id
-     * The ID of a choice
-     * @param choiceDesc
-     * The description of a choice
-     */
-    function Choice(id, choiceDesc) {
-        this.id = id;
-        this.choiceDesc = choiceDesc;
-    }
-    /**
-     * This function sets a new choice description
-     * @param choiceDescription
-     * The description of a choice
-     */
-    Choice.prototype.setChoiceDescription = function (choiceDescription) {
-        this.choiceDesc = choiceDescription;
-    };
-    return Choice;
-}());
-
-
-
-/***/ }),
-
-/***/ "./src/app/Survey.ts":
-/*!***************************!*\
-  !*** ./src/app/Survey.ts ***!
-  \***************************/
-/*! exports provided: Survey */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Survey", function() { return Survey; });
-/**
- * Contains all the assessments and choices that have been imported from Drupal
- * The format of this class has been defined in Drupal, so that it can easily be converted into a JSON string
- * And update the corresponding data in Drupal
- */
-var Survey = /** @class */ (function () {
-    /**
-     * Constructor for Survey class
-     * @param tabId
-     * The entity ID of a tabview
-     * @param tabDesc
-     * The tabview description
-     */
-    function Survey(tabId, tabDesc) {
-        this.tabId = tabId;
-        this.tabDesc = tabDesc;
-        this.assessments = new Array(); // Creates an instance of an array
-    }
-    /**
-     * Pushes an assessment into the assessment array
-     * @param assessment
-     * A tabview assessment
-     */
-    Survey.prototype.addAssessment = function (assessment) {
-        this.assessments.push(assessment);
-    };
-    return Survey;
-}());
-
-
-
-/***/ }),
-
 /***/ "./src/app/_services/message.service.ts":
 /*!**********************************************!*\
   !*** ./src/app/_services/message.service.ts ***!
@@ -217,6 +75,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _message_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./message.service */ "./src/app/_services/message.service.ts");
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm5/index.js");
 /* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm5/operators/index.js");
+/* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../environments/environment */ "./src/environments/environment.ts");
+
 
 
 
@@ -227,15 +87,11 @@ var httpOptions = {
     headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpHeaders"]({ 'Content-Type': 'application/json' })
 };
 var SurveyService = /** @class */ (function () {
-    // private tabViewURL = 'http://192.168.1.120/rest/content/tab/get/';
     function SurveyService(http, messageService) {
         this.http = http;
         this.messageService = messageService;
-        //
-        // private surveysURL = 'http://qadrupal.lan.sesahs.nsw.gov.au/tabview/edit';
-        // private drupalURL = 'http://qadrupal.lan.sesahs.nsw.gov.au/rest/tab/list?_format=json';
-        this.tabViewURL = 'http://qadrupal.lan.sesahs.nsw.gov.au/rest/content/tab/get/';
     }
+    //
     /**
      * Returns tab view and the questions from the tab view
      * @param ID
@@ -243,9 +99,17 @@ var SurveyService = /** @class */ (function () {
      */
     SurveyService.prototype.getTabView = function (ID) {
         var _this = this;
-        var url = "" + this.tabViewURL + ID + "/" + '?_format=json';
+        var url = "" + _environments_environment__WEBPACK_IMPORTED_MODULE_6__["environment"].formServerURL + ID + "/" + '?_format=json';
         return this.http.get(url)
-            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["tap"])(function (_) { return _this.log('fetched tabViews'); }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["catchError"])(this.handleError('getTabViewList', [])));
+            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["tap"])(function (_) { return _this.log('fetched tabViews'); }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["catchError"])(this.handleError('getTabViewList')));
+    };
+    SurveyService.prototype.submitSurvey = function (payload) {
+        var _this = this;
+        console.log(payload);
+        var url = "" + _environments_environment__WEBPACK_IMPORTED_MODULE_6__["environment"].submitSurveyURL;
+        return this.http
+            .post(url, payload, httpOptions)
+            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["tap"])(function (_) { return _this.log("Deployed Survey"); }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["catchError"])(this.handleError('addSurvey', payload)));
     };
     /**
      * Handle Http operation that failed.
@@ -272,7 +136,12 @@ var SurveyService = /** @class */ (function () {
     SurveyService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
             providedIn: 'root'
-        }),
+        })
+        /**
+         * Service class
+         * @author Peter Charles Sims
+         */
+        ,
         tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"],
             _message_service__WEBPACK_IMPORTED_MODULE_3__["MessageService"]])
     ], SurveyService);
@@ -302,8 +171,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var routes = [
-    { path: '', redirectTo: '/form/:id', pathMatch: 'full' },
-    { path: 'form/:id', component: _sort_sort_component__WEBPACK_IMPORTED_MODULE_3__["SortComponent"] },
+    { path: '', redirectTo: ':id', pathMatch: 'full' },
+    { path: ':id', component: _sort_sort_component__WEBPACK_IMPORTED_MODULE_3__["SortComponent"] },
 ];
 var AppRoutingModule = /** @class */ (function () {
     function AppRoutingModule() {
@@ -330,7 +199,7 @@ var AppRoutingModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL2FwcC5jb21wb25lbnQuY3NzIn0= */"
+module.exports = ".dashboard {\n    /*position: fixed;*/\n    top: 0;\n    left: 0;\n    width: 100%;\n}\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvYXBwLmNvbXBvbmVudC5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7SUFDSSxtQkFBbUI7SUFDbkIsTUFBTTtJQUNOLE9BQU87SUFDUCxXQUFXO0FBQ2YiLCJmaWxlIjoic3JjL2FwcC9hcHAuY29tcG9uZW50LmNzcyIsInNvdXJjZXNDb250ZW50IjpbIi5kYXNoYm9hcmQge1xuICAgIC8qcG9zaXRpb246IGZpeGVkOyovXG4gICAgdG9wOiAwO1xuICAgIGxlZnQ6IDA7XG4gICAgd2lkdGg6IDEwMCU7XG59XG4iXX0= */"
 
 /***/ }),
 
@@ -341,7 +210,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<!--The content below is only a placeholder and can be replaced.-->\n<body>\n<router-outlet></router-outlet>\n</body>\n\n"
+module.exports = "<!--The content below is only a placeholder and can be replaced.-->\n<body>\n<div class=\"dashboard\">\n    <!--Top Dashboard-->\n    <div class=\"dashboard\">\n        <app-dashboard></app-dashboard>\n    </div>\n</div>\n<router-outlet></router-outlet>\n</body>\n\n"
 
 /***/ }),
 
@@ -396,6 +265,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _esss_ng_xform__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @esss/ng-xform */ "./node_modules/@esss/ng-xform/esm5/ng-xform.es5.js");
 /* harmony import */ var _sort_sort_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./sort/sort.component */ "./src/app/sort/sort.component.ts");
 /* harmony import */ var _app_routing_module__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./app-routing.module */ "./src/app/app-routing.module.ts");
+/* harmony import */ var _dashboard_dashboard_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./dashboard/dashboard.component */ "./src/app/dashboard/dashboard.component.ts");
+
 
 
 
@@ -413,7 +284,8 @@ var AppModule = /** @class */ (function () {
             declarations: [
                 _app_component__WEBPACK_IMPORTED_MODULE_4__["AppComponent"],
                 _form_form_component__WEBPACK_IMPORTED_MODULE_5__["FormComponent"],
-                _sort_sort_component__WEBPACK_IMPORTED_MODULE_7__["SortComponent"]
+                _sort_sort_component__WEBPACK_IMPORTED_MODULE_7__["SortComponent"],
+                _dashboard_dashboard_component__WEBPACK_IMPORTED_MODULE_9__["DashboardComponent"]
             ],
             imports: [
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"],
@@ -432,6 +304,62 @@ var AppModule = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "./src/app/dashboard/dashboard.component.css":
+/*!***************************************************!*\
+  !*** ./src/app/dashboard/dashboard.component.css ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "#dashboard {\n    z-index: 1;\n}\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvZGFzaGJvYXJkL2Rhc2hib2FyZC5jb21wb25lbnQuY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0lBQ0ksVUFBVTtBQUNkIiwiZmlsZSI6InNyYy9hcHAvZGFzaGJvYXJkL2Rhc2hib2FyZC5jb21wb25lbnQuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiI2Rhc2hib2FyZCB7XG4gICAgei1pbmRleDogMTtcbn1cbiJdfQ== */"
+
+/***/ }),
+
+/***/ "./src/app/dashboard/dashboard.component.html":
+/*!****************************************************!*\
+  !*** ./src/app/dashboard/dashboard.component.html ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<nav class=\"navbar navbar-expand-md navbar-dark \" style=\"background-color: #016fbe\" id=\"dashboard\" >\n    <img src=\"../../assets/logo.png\" alt=\"[LOGO]\" style=\"height: 60px; width: 60px\">\n</nav>\n"
+
+/***/ }),
+
+/***/ "./src/app/dashboard/dashboard.component.ts":
+/*!**************************************************!*\
+  !*** ./src/app/dashboard/dashboard.component.ts ***!
+  \**************************************************/
+/*! exports provided: DashboardComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DashboardComponent", function() { return DashboardComponent; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+
+
+var DashboardComponent = /** @class */ (function () {
+    function DashboardComponent() {
+    }
+    DashboardComponent.prototype.ngOnInit = function () {
+    };
+    DashboardComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
+            selector: 'app-dashboard',
+            template: __webpack_require__(/*! ./dashboard.component.html */ "./src/app/dashboard/dashboard.component.html"),
+            styles: [__webpack_require__(/*! ./dashboard.component.css */ "./src/app/dashboard/dashboard.component.css")]
+        }),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [])
+    ], DashboardComponent);
+    return DashboardComponent;
+}());
+
+
+
+/***/ }),
+
 /***/ "./src/app/form/form.component.css":
 /*!*****************************************!*\
   !*** ./src/app/form/form.component.css ***!
@@ -439,7 +367,7 @@ var AppModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "#wrapper {\n    margin: auto;\n    width: 50%;\n    align-content: center;\n}\n#title {\n    text-align: center ;\n}\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvZm9ybS9mb3JtLmNvbXBvbmVudC5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7SUFDSSxZQUFZO0lBQ1osVUFBVTtJQUNWLHFCQUFxQjtBQUN6QjtBQUNBO0lBQ0ksbUJBQW1CO0FBQ3ZCIiwiZmlsZSI6InNyYy9hcHAvZm9ybS9mb3JtLmNvbXBvbmVudC5jc3MiLCJzb3VyY2VzQ29udGVudCI6WyIjd3JhcHBlciB7XG4gICAgbWFyZ2luOiBhdXRvO1xuICAgIHdpZHRoOiA1MCU7XG4gICAgYWxpZ24tY29udGVudDogY2VudGVyO1xufVxuI3RpdGxlIHtcbiAgICB0ZXh0LWFsaWduOiBjZW50ZXIgO1xufVxuIl19 */"
+module.exports = "#wrapper {\n    margin: auto;\n    width: 70%;\n    align-content: center;\n}\n#title {\n    text-align: center ;\n}\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvZm9ybS9mb3JtLmNvbXBvbmVudC5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7SUFDSSxZQUFZO0lBQ1osVUFBVTtJQUNWLHFCQUFxQjtBQUN6QjtBQUNBO0lBQ0ksbUJBQW1CO0FBQ3ZCIiwiZmlsZSI6InNyYy9hcHAvZm9ybS9mb3JtLmNvbXBvbmVudC5jc3MiLCJzb3VyY2VzQ29udGVudCI6WyIjd3JhcHBlciB7XG4gICAgbWFyZ2luOiBhdXRvO1xuICAgIHdpZHRoOiA3MCU7XG4gICAgYWxpZ24tY29udGVudDogY2VudGVyO1xufVxuI3RpdGxlIHtcbiAgICB0ZXh0LWFsaWduOiBjZW50ZXIgO1xufVxuIl19 */"
 
 /***/ }),
 
@@ -450,7 +378,7 @@ module.exports = "#wrapper {\n    margin: auto;\n    width: 50%;\n    align-cont
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"wrapper\" *ngIf=\"survey\">\n    <h2 id=\"title\">{{tabTitle}}</h2>\n    <ng-xform [horizontalForm]=\"horizontal\" [labelWidth]=\"labelWidth\" [fields]=\"fields\" id=\"xform\"></ng-xform>\n</div>\n\n"
+module.exports = "<br>\n<div id=\"wrapper\" *ngIf=\"survey\">\n    <h2 id=\"title\">{{tabTitle}}</h2>\n    <ng-xform-edit-save  [horizontalForm]=\"horizontal\" [labelWidth]=\"labelWidth\" [fields]=\"fields\" (submit)=\"onSubmit($event)\" [(editing)]=\"editing\" id=\"xform\"></ng-xform-edit-save>\n</div>\n<br><br>\n\n"
 
 /***/ }),
 
@@ -473,8 +401,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/platform-browser */ "./node_modules/@angular/platform-browser/fesm5/platform-browser.js");
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm5/forms.js");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
-/* harmony import */ var _Survey__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../Survey */ "./src/app/Survey.ts");
-/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm5/operators/index.js");
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm5/operators/index.js");
+/* harmony import */ var _services_survey_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../_services/survey.service */ "./src/app/_services/survey.service.ts");
 
 
 
@@ -487,14 +415,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var FormComponent = /** @class */ (function () {
-    function FormComponent(titleService, http) {
+    function FormComponent(titleService, http, surveyService) {
         this.titleService = titleService;
         this.http = http;
+        this.surveyService = surveyService;
         this.onchangefn = new rxjs__WEBPACK_IMPORTED_MODULE_4__["Subject"]();
         this.horizontal = false;
-        this.labelWidth = 2;
+        this.labelWidth = 1000;
         this.outputhelper = { A: 1, B: 2, C: 3 };
         this.subscriptions = [];
+        this.editing = true;
     }
     FormComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -528,14 +458,27 @@ var FormComponent = /** @class */ (function () {
                 label: 'Medical Record Number (MRN)',
             })
         ];
-        var i = 0;
-        for (i; i < this.survey.assessments.length; i++) {
-            if (this.survey.assessments[i].asessmentType.toString() === '5') {
-                this.createRadioGroup(i);
-                this.createSelect(i);
-            }
-            else {
-                this.createText(i);
+        for (var i = 0; i < this.survey.assessments.length; i++) {
+            this.removeField(i);
+            var required = this.survey.assessments[i].assessmentRequired;
+            switch (this.survey.assessments[i].assessmentDisplayType) {
+                case 'Radio':
+                    this.createRadioGroup(i, required);
+                    break;
+                case 'SelectMany':
+                    this.createSelectMany(i, required);
+                    break;
+                case 'SelectOne':
+                    this.createSelect(i, required);
+                    break;
+                case 'Text':
+                    this.createText(i, required);
+                    break;
+                case 'Number':
+                    this.createNumber(i, required);
+                    break;
+                default:
+                    console.log("Invalid Type");
             }
         }
     };
@@ -543,116 +486,213 @@ var FormComponent = /** @class */ (function () {
      * This funtion is used to create a SelectField
      * @param i Is used to determine which assessment has been inputed
      */
-    FormComponent.prototype.createSelect = function (i) {
+    FormComponent.prototype.createSelect = function (i, optional) {
+        var options = this.createOptions(i);
+        var validate = this.checkValidation(optional);
+        var tempField;
+        // Check if field already exists
+        if (this.fieldCheck(i, 'SELECT')) {
+            this.removeField(i);
+        }
         // Push new select into the fields array
-        var tempField = new _esss_ng_xform__WEBPACK_IMPORTED_MODULE_3__["SelectField"]({
-            key: this.survey.assessments[i].id.toString(),
-            label: this.survey.assessments[i].assessmentDesc,
-            searchable: true,
-            options: this.survey.assessments[i].choices,
+        tempField = new _esss_ng_xform__WEBPACK_IMPORTED_MODULE_3__["SelectField"]({
+            key: this.survey.assessments[i].assessmentId.toString(),
+            label: this.survey.assessments[i].assessmentDescription,
+            searchable: false,
+            options: options,
             addNewOption: true,
             addNewOptionText: 'id',
             optionLabelKey: 'choiceDesc',
             validators: [
-                _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].required,
+                validate,
                 _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].minLength(1)
-            ]
+            ],
         });
-        // Push
-        this.fields.push(tempField);
+        var delta = Number(this.survey.assessments[i].assessmentDelta);
+        this.orderField(delta, tempField);
     };
     /**
      * This funtion is used to create a SelectField
      * @param i Is used to determine which assessment has been inputed
      */
-    FormComponent.prototype.createSelectMany = function (i) {
+    FormComponent.prototype.createSelectMany = function (i, optional) {
+        var options = this.createOptions(i);
+        var validate = this.checkValidation(optional);
+        var tempField;
+        // Check if field already exists
+        if (this.fieldCheck(i, 'SELECT')) {
+            this.removeField(i);
+        }
         // Push new select into the fields array
-        var tempField = new _esss_ng_xform__WEBPACK_IMPORTED_MODULE_3__["SelectField"]({
-            key: this.survey.assessments[i].id.toString(),
-            label: this.survey.assessments[i].assessmentDesc,
+        tempField = new _esss_ng_xform__WEBPACK_IMPORTED_MODULE_3__["SelectField"]({
+            key: this.survey.assessments[i].assessmentId.toString(),
+            label: this.survey.assessments[i].assessmentDescription,
             searchable: true,
-            options: this.survey.assessments[i].choices,
+            options: options,
             addNewOption: true,
             addNewOptionText: 'id',
             optionLabelKey: 'choiceDesc',
             multiple: true,
             validators: [
-                _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].required,
+                validate,
                 _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].minLength(1)
             ]
         });
-        // Push
-        this.fields.push(tempField);
+        var delta = Number(this.survey.assessments[i].assessmentDelta);
+        this.orderField(delta, tempField);
     };
     /**
      * This funtion is used to create a RadioGroup
      * @param i Is used to determine which assessment has been inputed
      */
-    FormComponent.prototype.createRadioGroup = function (i) {
+    FormComponent.prototype.createRadioGroup = function (i, optional) {
+        var options = this.createOptions(i);
+        var validate = this.checkValidation(optional);
+        var tempField;
+        // Check if field already exists
+        if (this.fieldCheck(i, 'RADIOGROUP')) {
+            return;
+        }
         // Push new radio group into the fields array
-        var tempField = new _esss_ng_xform__WEBPACK_IMPORTED_MODULE_3__["RadioGroupField"]({
-            key: this.survey.assessments[i].id.toString(),
-            label: this.survey.assessments[i].assessmentDesc,
-            options: Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["of"])(this.survey.assessments[i].choices).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_10__["delay"])(10)),
+        tempField = new _esss_ng_xform__WEBPACK_IMPORTED_MODULE_3__["RadioGroupField"]({
+            key: this.survey.assessments[i].assessmentId.toString(),
+            label: this.survey.assessments[i].assessmentDescription,
+            options: Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["of"])(options).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_9__["delay"])(10)),
             optionValueKey: 'id',
             optionLabelKey: 'choiceDesc',
             validators: [
-                _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].required
+                validate,
+                _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].minLength(1)
             ]
         });
-        // Push
-        this.fields.push(tempField);
+        var delta = Number(this.survey.assessments[i].assessmentDelta);
+        this.orderField(delta, tempField);
     };
     /**
      * Used to create a TextField
      * @param i Is used to determine which assessment has been inputed
      */
-    FormComponent.prototype.createText = function (i) {
+    FormComponent.prototype.createText = function (i, optional) {
+        var tempField;
+        var validate = this.checkValidation(optional);
+        // Check if field already exists
+        if (this.fieldCheck(i, 'TEXT')) {
+            return;
+        }
         // Push new text field into the fields array
-        var tempField = new _esss_ng_xform__WEBPACK_IMPORTED_MODULE_3__["TextField"]({
-            key: this.survey.assessments[i].id,
-            label: this.survey.assessments[i].assessmentDesc,
+        tempField = new _esss_ng_xform__WEBPACK_IMPORTED_MODULE_3__["TextField"]({
+            key: this.survey.assessments[i].assessmentId,
+            label: this.survey.assessments[i].assessmentDescription,
             validators: [
-                _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].required,
+                validate,
                 _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].minLength(1)
             ]
         });
-        // Push
-        this.fields.push(tempField);
+        var delta = Number(this.survey.assessments[i].assessmentDelta);
+        this.orderField(delta, tempField);
     };
     /**
      * Used to create a NumberField
      * @param i Is used to determine which assessment has been inputed
      */
-    FormComponent.prototype.createNumber = function (i) {
+    FormComponent.prototype.createNumber = function (i, optional) {
+        var tempField;
+        var validate = this.checkValidation(optional);
+        // Check if field already exists
+        if (this.fieldCheck(i, 'NUMBER')) {
+            return;
+        }
         // Push new number field into the fields array
-        var tempField = new _esss_ng_xform__WEBPACK_IMPORTED_MODULE_3__["NumberField"]({
-            key: this.survey.assessments[i].id,
-            label: this.survey.assessments[i].assessmentDesc + ' (Number)',
+        tempField = new _esss_ng_xform__WEBPACK_IMPORTED_MODULE_3__["NumberField"]({
+            key: this.survey.assessments[i].assessmentId,
+            label: this.survey.assessments[i].assessmentDescription,
             validators: [
-                _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].required,
+                validate,
                 _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].minLength(1)
             ]
         });
-        // Push
-        this.fields.push(tempField);
+        var delta = Number(this.survey.assessments[i].assessmentDelta);
+        this.orderField(delta, tempField);
     };
     /**
-     * Used to create a TextField
-     * @param i Is used to determine which assessment has been inputed
+     * This function will return a boolean whether or not an element already exists in the array
+     * @param i
+     * i is the index of the array which will be checked
+     * @param fieldType
      */
-    FormComponent.prototype.createCheckBox = function (i) {
-        // Push new text field into the fields array
-        var tempField = new _esss_ng_xform__WEBPACK_IMPORTED_MODULE_3__["CheckboxField"]({
-            key: this.survey.assessments[i].id,
-            label: this.survey.assessments[i].assessmentDesc,
+    FormComponent.prototype.fieldCheck = function (i, fieldType) {
+        var j = 0;
+        var validator;
+        validator = this.checkValidation(this.survey.assessments[i].assessmentRequired);
+        for (j; j < this.fields.length; j++) {
+            if (this.fields[j].key === this.survey.assessments[i].assessmentId && fieldType === this.fields[j].controlType
+                && this.fields[j].validators[0] === validator) {
+                return true;
+            }
+            else if (this.fields[j].key === this.survey.assessments[i].assessmentId) {
+                this.removeField(j);
+                return false;
+            }
+        }
+        return false;
+    };
+    /**
+     * This function will remove a specified element in the fields array
+     * @param i
+     * i is the index of the array which will be removed
+     */
+    FormComponent.prototype.removeField = function (i) {
+        this.fields.splice(i, 1);
+    };
+    /**
+     * This function is used to order the position of a newly added field
+     * @param i
+     * i is the index of the array which will be added
+     */
+    FormComponent.prototype.orderField = function (i, field) {
+        this.fields.splice(i, 0, field);
+    };
+    FormComponent.prototype.createOptions = function (i) {
+        var options = [];
+        this.survey.assessments[i].assessmentChoices.forEach(function (element) {
+            options.push((element.choiceId, element.choiceDescription));
         });
-        // Push
-        this.fields.push(tempField);
+        return options;
     };
     FormComponent.prototype.onSubmit = function (values) {
         this.model = values;
-        console.log(this.model);
+        var payload = JSON.stringify(this.model);
+        this.submitForm(payload);
+    };
+    FormComponent.prototype.submitForm = function (payload) {
+        this.surveyService
+            .submitSurvey(payload) // Add the survey
+            .subscribe(function (res) {
+            console.log(res);
+        });
+    };
+    FormComponent.prototype.checkValidation = function (optional) {
+        var validate;
+        if (optional === '0') {
+            validate = _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].minLength(1);
+        }
+        else {
+            validate = _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].required;
+        }
+        return validate;
+    };
+    /**
+     * Determines if positions are equal to each other
+     * @param x start position
+     * @param y new position
+     */
+    FormComponent.prototype.checkPos = function (x, y) {
+        if (x === y) {
+            return x;
+        }
+        else {
+            return y;
+        }
     };
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])(_esss_ng_xform__WEBPACK_IMPORTED_MODULE_3__["NgXformEditSaveComponent"]),
@@ -664,7 +704,7 @@ var FormComponent = /** @class */ (function () {
     ], FormComponent.prototype, "customFieldTmpl", void 0);
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Input"])(),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:type", _Survey__WEBPACK_IMPORTED_MODULE_9__["Survey"])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:type", Object)
     ], FormComponent.prototype, "survey", void 0);
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Input"])(),
@@ -680,9 +720,15 @@ var FormComponent = /** @class */ (function () {
             declarations: [_app_component__WEBPACK_IMPORTED_MODULE_2__["AppComponent"]],
             imports: [_esss_ng_xform__WEBPACK_IMPORTED_MODULE_3__["NgXformModule"], _angular_router__WEBPACK_IMPORTED_MODULE_8__["RouterModule"]],
             bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_2__["AppComponent"]]
-        }),
+        })
+        /**
+         * Class the displays the form
+         * @author Peter Charles Sims
+         */
+        ,
         tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_platform_browser__WEBPACK_IMPORTED_MODULE_6__["Title"],
-            _angular_common_http__WEBPACK_IMPORTED_MODULE_5__["HttpClient"]])
+            _angular_common_http__WEBPACK_IMPORTED_MODULE_5__["HttpClient"],
+            _services_survey_service__WEBPACK_IMPORTED_MODULE_10__["SurveyService"]])
     ], FormComponent);
     return FormComponent;
 }());
@@ -709,7 +755,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"survey\" *ngIf=\"survey\">\n    <app-form [survey]=\"survey\" [tabTitle]=\"tabTitle\"></app-form>\n</div>\n\n"
+module.exports = "<div id=\"survey\" *ngIf=\"survey\">\n    <app-form [survey]=\"survey\" [tabTitle]=\"tabTitle\"></app-form>\n</div>"
 
 /***/ }),
 
@@ -725,19 +771,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SortComponent", function() { return SortComponent; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
-/* harmony import */ var _Survey__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Survey */ "./src/app/Survey.ts");
-/* harmony import */ var _Assessment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../Assessment */ "./src/app/Assessment.ts");
-/* harmony import */ var _Choice__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../Choice */ "./src/app/Choice.ts");
-/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
-/* harmony import */ var _services_survey_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../_services/survey.service */ "./src/app/_services/survey.service.ts");
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
+/* harmony import */ var _services_survey_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../_services/survey.service */ "./src/app/_services/survey.service.ts");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
 
 
 
-
-
-
-// import {ActivatedRoute} from '@angular/router';
 
 
 var SortComponent = /** @class */ (function () {
@@ -751,6 +790,8 @@ var SortComponent = /** @class */ (function () {
         this.id = +this.route.snapshot.paramMap.get('id');
     }
     SortComponent.prototype.ngOnInit = function () {
+        // this.createSurvey(); // Create an instance of a survey
+        console.log(this.id);
         this.getTabView();
     };
     /**
@@ -762,7 +803,7 @@ var SortComponent = /** @class */ (function () {
     SortComponent.prototype.getTabView = function () {
         var _this = this;
         this.formService.getTabView(this.id)
-            .subscribe(function (data) { return _this.tabViews = data; }, // Move data into TabView
+            .subscribe(function (data) { return _this.str = data; }, // Move data into TabView
         function (// Move data into TabView
         err) { return console.log(err); }, // Log any Errors
         function () { return _this.sortSurvey(); }); // Sort tabviews into a Survey
@@ -774,72 +815,26 @@ var SortComponent = /** @class */ (function () {
      * Then it is added into the Survey
      */
     SortComponent.prototype.sortSurvey = function () {
-        this.createSurvey(); // init survey
-        var tempAssessment; // Create a temporary
-        var i = 0; // Iterates through the tab view
-        var j = 0; // Iterates through the assessment choices
-        this.tabTitle = this.tabViews[0].tabViewLabel;
-        for (i; i < this.tabViews.length; i++) {
-            tempAssessment = this.createAssessment(i); // Create a new assessment
-            if (this.tabViews[i].assessmentType.toString() === '4') {
-                tempAssessment.addChoice(this.createChoice(i, 4)); // Add a single choice to an assessment
-            }
-            else if (this.tabViews[i].assessmentType.toString() === '5') {
-                j = i; // index of the choice
-                while (this.tabViews[j].assessmentId === this.tabViews[i].assessmentId) {
-                    tempAssessment.addChoice(this.createChoice(j, 5)); // Add a single a choice to an assessment
-                    j++;
-                }
-                i = j; // Update new position of i
-            }
-            console.log(tempAssessment);
-            this.survey.addAssessment(tempAssessment); // Add the assessment to the survey
-        }
+        var json = JSON.parse(this.str);
+        eval(json);
+        this.survey = json;
+        this.tabTitle = this.survey.tabViewLabel;
     };
-    /**
-     * Creates a new choice based on the assessment type
-     * @param i
-     * Index of the array
-     * @type
-     * The assessment type
-     */
-    SortComponent.prototype.createChoice = function (i, type) {
-        var tempChoices; // Create temp choice
-        /** Creates a default choice*/
-        if (type === 4) {
-            tempChoices = new _Choice__WEBPACK_IMPORTED_MODULE_4__["Choice"](4, 'Type 4');
-            return tempChoices;
-        }
-        else {
-            /** Creates a normal choice*/
-            tempChoices = new _Choice__WEBPACK_IMPORTED_MODULE_4__["Choice"](this.tabViews[i].choiceId, this.tabViews[i].choiceLabel);
-        }
-        return tempChoices;
-    };
-    /**
-     * Creates a new survey
-     */
-    SortComponent.prototype.createSurvey = function () {
-        this.survey = new _Survey__WEBPACK_IMPORTED_MODULE_2__["Survey"](this.tabViews[0].tabViewId, this.tabViews[0].tabViewLabel);
-    };
-    /**
-     * Init temp assessment
-     * @param i
-     * Index of the array
-     */
-    SortComponent.prototype.createAssessment = function (i) {
-        var tempAssessment = new _Assessment__WEBPACK_IMPORTED_MODULE_3__["Assessment"](this.tabViews[i].assessmentId, this.tabViews[i].assessmentType, this.tabViews[i].assessmentLabel.trim());
-        return tempAssessment;
+    SortComponent.prototype.submitSurvey = function (payload) {
     };
     SortComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
             selector: 'app-sort',
             template: __webpack_require__(/*! ./sort.component.html */ "./src/app/sort/sort.component.html"),
             styles: [__webpack_require__(/*! ./sort.component.css */ "./src/app/sort/sort.component.css")]
-        }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_common_http__WEBPACK_IMPORTED_MODULE_5__["HttpClient"],
-            _angular_router__WEBPACK_IMPORTED_MODULE_7__["ActivatedRoute"],
-            _services_survey_service__WEBPACK_IMPORTED_MODULE_6__["SurveyService"]])
+        })
+        /**
+         * @author Peter Charles Sims
+         */
+        ,
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"],
+            _angular_router__WEBPACK_IMPORTED_MODULE_4__["ActivatedRoute"],
+            _services_survey_service__WEBPACK_IMPORTED_MODULE_3__["SurveyService"]])
     ], SortComponent);
     return SortComponent;
 }());
@@ -862,7 +857,9 @@ __webpack_require__.r(__webpack_exports__);
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 var environment = {
-    production: false
+    production: false,
+    formServerURL: 'http://mysite.com/',
+    submitSurveyURL: 'http://mysite.com/form-data',
 };
 /*
  * For easier debugging in development mode, you can import the following file
